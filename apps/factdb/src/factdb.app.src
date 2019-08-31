@@ -1,0 +1,14 @@
+{application, factdb,
+ [{description, "An OTP application"},
+  {vsn, "semver"},
+  {registered, []},
+  {mod, {factdb_app, []}},
+  {applications,
+   [kernel,
+    stdlib
+   ]},
+  {env,[]},
+  {modules, []},
+  {maintainers, []},
+  {links, []}
+ ]}.

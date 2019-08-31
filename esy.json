@@ -1,0 +1,12 @@
+{
+  "dependencies": {
+    "@opam/dune": "*",
+    "@opam/fmt": "*",
+    "@opam/fpath": "*",
+    "@opam/logs": "*",
+    "@opam/merlin": "*",
+    "@opam/odoc": "*",
+    "@opam/rdf": "*",
+    "ocaml": "~4.8.0"
+  }
+}
