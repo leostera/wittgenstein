@@ -18,6 +18,7 @@ mkShell {
     # Base utilities
     zsh
     coreutils
+    envsubst
     git
 
     # Languages

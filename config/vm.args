@@ -2,5 +2,9 @@
 
 -setcookie factdb_cookie
 
+-heart -env HEART_BEAT_TIMEOUT 30
+
 +K true
 +A30
+
+-smp auto
