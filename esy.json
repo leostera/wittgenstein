@@ -1,12 +1,29 @@
 {
+  "esy": {
+    "build": "dune build @all"
+  },
+  "scripts": {
+    "fmt": "dune build @fmt --auto-promote",
+    "start": "dune build @all --watch",
+    "cli": "dune exec ./cli/bin/facts.exe"
+  },
   "dependencies": {
+    "@opam/angstrom": "0.11.2",
+    "@opam/bos": "0.2.0",
+    "@opam/cmdliner": "1.0.3",
     "@opam/dune": "*",
     "@opam/fmt": "*",
     "@opam/fpath": "*",
-    "@opam/logs": "*",
-    "@opam/merlin": "*",
-    "@opam/odoc": "*",
-    "@opam/rdf": "*",
+    "@opam/graphql_parser": "*",
+    "@opam/logs": "0.6.3",
+    "@opam/menhir": "20181113",
+    "@opam/merlin": "~3.2.2",
+    "@opam/ppx_sexp_conv": "v0.12.0",
+    "@opam/ppx_deriving": "4.4",
+    "@opam/rdf": "0.11.0",
+    "@opam/reason": "*",
+    "@opam/sexplib": "v0.12.0",
     "ocaml": "~4.8.0"
-  }
+  },
+  "resolutions": {}
 }

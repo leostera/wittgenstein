@@ -1,0 +1,3 @@
+(executable
+  (name facts)
+  (libraries parser codegen cmdliner logs logs.fmt fmt fmt.tty))

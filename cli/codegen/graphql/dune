@@ -1,0 +1,3 @@
+(library
+  (name graphql)
+  (libraries graphql_parser model logs logs.fmt fmt.tty fmt))
