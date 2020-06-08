@@ -4,6 +4,6 @@ defmodule Wittgenstein.Consolidation do
   alias Wittgenstein.Model.Entity
 
   def apply_fact(%Entity{} = e, %Fact{} = f) do
-    Config.Consolidation.strategy().consolidate(e, f)
+    Config.consolidation_strategy().consolidate(e, f)
   end
 end

@@ -17,11 +17,17 @@ defmodule Wittgenstein.MixProject do
 
   def application do
     [
+      mod: {Wittgenstein.Application, []},
       extra_applications: [:logger]
     ]
   end
 
   defp deps do
-    []
+    [
+      {:credo, "~> 1.1.0", only: [:dev, :test], runtime: false},
+      {:dialyxir, "~> 1.0.0", only: :dev, runtime: false},
+      {:propcheck, "~> 1.2.0", only: [:dev, :test]},
+      {:uuid, "~> 1.1"}
+    ]
   end
 end

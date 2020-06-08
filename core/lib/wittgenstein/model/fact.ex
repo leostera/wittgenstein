@@ -23,7 +23,7 @@ defmodule Wittgenstein.Model.Fact do
 
   def is_valid?(_), do: false
 
-  def new() do
+  def new do
     %__MODULE__{
       stated_at: NaiveDateTime.utc_now(),
       uri: Uri.new(:wittgenstein, :fact),
