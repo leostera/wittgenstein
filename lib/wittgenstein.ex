@@ -1,0 +1,2 @@
+defmodule Wittgenstein do
+end

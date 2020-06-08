@@ -1,3 +1,0 @@
-(library
-  (name erlang)
-  (libraries model logs logs.fmt fmt.tty fmt))

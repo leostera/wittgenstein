@@ -1,3 +1,0 @@
-(library
-  (name parser)
-  (libraries rdf logs logs.fmt fmt.tty fmt))

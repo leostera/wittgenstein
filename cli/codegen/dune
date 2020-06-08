@@ -1,5 +1,0 @@
-(library
-  (name codegen)
-  (libraries 
-  erlang graphql reason
-  model logs logs.fmt fmt.tty fmt))
