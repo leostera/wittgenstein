@@ -21,11 +21,11 @@ defmodule Dev.Abstractmachines.Wittgenstein.StateFactReply do
   use Protobuf, syntax: :proto3
 
   @type t :: %__MODULE__{
-          respose: {atom, any}
+          response: {atom, any}
         }
-  defstruct [:respose]
+  defstruct [:response]
 
-  oneof :respose, 0
+  oneof :response, 0
   field :fact_uri, 1, type: :string, oneof: 0
   field :error, 2, type: :string, oneof: 0
 end

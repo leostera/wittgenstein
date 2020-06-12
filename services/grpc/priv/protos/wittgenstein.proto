@@ -20,7 +20,7 @@ message StateFactRequest {
 }
 
 message StateFactReply {
-  oneof respose {
+  oneof response {
     string fact_uri = 1;
     string error = 2;
   }
