@@ -43,7 +43,7 @@ defmodule Wittgenstein.Store.Postgres do
     end
   end
 
-  @spec fetch_entity(Uri.t()) :: {:ok, Entity.Consolidated.t()} | {:error, term()}
+  @spec fetch_entity(Uri.t()) :: {:ok, Entity.t()} | {:error, term()}
   def fetch_entity(uri) do
     Tracer.with_span "wittgenstein.store.postgres.fetch_entity" do
       SpanUtils.set_attributes(%{uri: uri |> Uri.to_string()})

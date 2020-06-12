@@ -1,6 +1,7 @@
 defmodule Wittgenstein.Store.InMemory do
   use GenServer
 
+  alias Wittgenstein.Uri
   alias Wittgenstein.Model.Fact
   alias Wittgenstein.Model.Entity
 
@@ -30,13 +31,13 @@ defmodule Wittgenstein.Store.InMemory do
   def handle_call([persist_entity: e], _, s), do: do_persist_entity(e, s)
   def handle_call([fetch_entity: uri], _, s), do: do_fetch_entity(uri, s)
 
-  def do_persist_fact(%Fact{} = fact, %{facts: facts} = state) do
+  def do_persist_fact(fact, %{facts: facts} = state) do
     uri = fact |> Fact.uri()
     :ets.insert(facts, {uri, fact})
     {:reply, :ok, state}
   end
 
-  def do_persist_entity(%Entity{} = entity, %{entities: entities} = state) do
+  def do_persist_entity(entity, %{entities: entities} = state) do
     uri = entity |> Entity.uri()
     :ets.insert(entities, {uri, entity})
     {:reply, :ok, state}

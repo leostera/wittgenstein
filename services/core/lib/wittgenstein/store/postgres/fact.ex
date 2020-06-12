@@ -37,7 +37,7 @@ defmodule Wittgenstein.Store.Postgres.Fact do
 
   @spec to_model(%__MODULE__{}) :: Fact.t()
   def to_model(%__MODULE__{} = f) do
-    {:ok, fact} = Fact.from_map(f)
+    {:ok, fact} = f |> Map.from_struct() |> Fact.from_map()
     fact
   end
 end
