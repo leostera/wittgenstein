@@ -6,7 +6,7 @@ defmodule OpenTelemetry.SpanUtils do
       |> Enum.map(fn {k, v} ->
         OpenTelemetry.Span.set_attribute(
           k,
-          OpenTelemetry.SpanUtils.string(v) |> :unicode.characters_to_binary()
+          v |> OpenTelemetry.SpanUtils.string() |> :unicode.characters_to_binary()
         )
       end)
     end
@@ -31,7 +31,8 @@ defmodule OpenTelemetry.SpanUtils do
       value
       |> Enum.with_index()
       |> Enum.flat_map(fn {v, i} ->
-        map_to_paths(v)
+        v
+        |> map_to_paths()
         |> Enum.map(fn {k, v2} -> {"#{key}.#{i}.#{k}", v2} end)
       end)
       |> Enum.concat(acc)
@@ -41,7 +42,8 @@ defmodule OpenTelemetry.SpanUtils do
   def map_to_paths([{key, value} | ms], acc) when is_map(value) do
     map_to_paths(
       ms,
-      map_to_paths(value)
+      value
+      |> map_to_paths()
       |> Enum.map(fn {k, v} -> {"#{key}.#{k}", v} end)
       |> Enum.concat(acc)
     )

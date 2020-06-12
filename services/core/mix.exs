@@ -24,7 +24,7 @@ defmodule Wittgenstein.MixProject do
         "credo --strict",
         "format --check-formatted --dry-run",
         "hex.audit",
-        "sobelow --config",
+        "sobelow --config"
       ]
     ]
   end
@@ -55,5 +55,4 @@ defmodule Wittgenstein.MixProject do
       plt_add_apps: [:mix, :ecto, :uuid]
     ]
   end
-
 end

@@ -23,16 +23,20 @@ defmodule Wittgenstein.Consolidation.Strategy.LastFactWins do
           [new_fact | old_values]
 
         _ ->
-          Enum.map(old_values, fn
-            old_fact ->
-              case Fact.field(old_fact) == Fact.field(new_fact) and
-                     Fact.stated_at(new_fact) > Fact.stated_at(old_fact) do
-                true -> new_fact
-                _ -> old_fact
-              end
-          end)
+          replace_old_fact_with_new(old_values, new_fact)
       end
 
     {:ok, entity |> Entity.set_values(new_values)}
+  end
+
+  defp replace_old_fact_with_new(old_values, new_fact) do
+    Enum.map(old_values, fn
+      old_fact ->
+        case Fact.field(old_fact) == Fact.field(new_fact) and
+               Fact.stated_at(new_fact) > Fact.stated_at(old_fact) do
+          true -> new_fact
+          _ -> old_fact
+        end
+    end)
   end
 end

@@ -1,4 +1,13 @@
 defmodule Wittgenstein.Config do
+  @moduledoc """
+
+  Configuration module.
+
+  Every relevant piece of runtime configuration should be abstracted by a
+  function in or a submodule to this module.
+
+  """
+
   def store_backend do
     Application.get_env(:wittgenstein, Store, [])
     |> Keyword.get(:backend, Wittgenstein.Store.InMemory)

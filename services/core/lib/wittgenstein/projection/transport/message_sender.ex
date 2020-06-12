@@ -31,7 +31,7 @@ defmodule Wittgenstein.Projection.Transport.MessageSender do
     {:reply, :ok, state}
   end
 
-  def projection_list() do
+  def projection_list do
     Application.get_env(:wittgenstein, __MODULE__, [])
     |> Keyword.get(:projections, [])
   end

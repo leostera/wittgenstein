@@ -26,6 +26,7 @@ defmodule Wittgenstein.Client do
       :ok = Store.persist_fact(fact)
 
       entity_uri = Fact.entity_uri(fact)
+
       entity =
         case Store.fetch_entity(entity_uri) do
           {:error, :uri_not_found} -> Entity.new(entity_uri)
