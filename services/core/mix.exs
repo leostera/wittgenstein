@@ -11,7 +11,20 @@ defmodule Wittgenstein.MixProject do
       deps: deps(),
       name: "Wittgenstein",
       source_url: "https://github.com/AbstractMachinesLab/wittgenstein",
-      homepage_url: "https://abstractmachines.dev/wittgenstein"
+      homepage_url: "https://abstractmachines.dev/wittgenstein",
+      aliases: aliases()
+    ]
+  end
+
+  def aliases do
+    [
+      check: [
+        "dialyzer --halt-exit-status",
+        "credo --strict",
+        "format --check-formatted --dry-run",
+        "hex.audit",
+        "sobelow --config",
+      ]
     ]
   end
 
