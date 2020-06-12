@@ -1,6 +1,10 @@
 import Config
 
+config :starwars, disney: :true
+
 config :starwars, ecto_repos: [Wittgenstein.Store.Postgres]
+
+config :grpc, start_server: true
 
 config :wittgenstein, Store, backend: Wittgenstein.Store.Postgres
 

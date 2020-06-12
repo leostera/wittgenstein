@@ -23,6 +23,7 @@ defmodule Starwars.MixProject do
   defp deps do
     [
       {:wittgenstein, path: "../../services/core"},
+      {:wittgenstein_grpc, path: "../../services/grpc"},
       {:opentelemetry, "~> 0.4.0"},
       {:opentelemetry_zipkin, ">= 0.0.0"},
       # {:dep_from_hexpm, "~> 0.3.0"},
