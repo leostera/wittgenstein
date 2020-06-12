@@ -1,11 +1,12 @@
 defmodule Starwars.Printer do
+  use Wittgenstein.Projection
 
-  @behaviour Wittgenstein.Projection
+  alias Wittgenstein.Uri
 
-  @impl true
-  def project(uri) do
-    uri
-    |> Uri.to_string()
-    |> IO.inspect()
+  def handle_uri(uri) do
+    "#{NaiveDateTime.utc_now()} - #{uri |> Uri.to_string()}"
+    |> IO.inspect(label: __MODULE__ |> Atom.to_string())
+
+    :ok
   end
 end

@@ -7,8 +7,7 @@ defmodule Starwars.Application do
 
   def start(_type, _args) do
     children = [
-      # Starts a worker by calling: Starwars.Worker.start_link(arg)
-      # {Starwars.Worker, arg}
+      {Starwars.Printer, []}
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html
