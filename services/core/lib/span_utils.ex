@@ -4,7 +4,10 @@ defmodule OpenTelemetry.SpanUtils do
       unquote(map)
       |> OpenTelemetry.SpanUtils.map_to_paths()
       |> Enum.map(fn {k, v} ->
-        OpenTelemetry.Span.set_attribute(k, OpenTelemetry.SpanUtils.string(v) |> :unicode.characters_to_binary())
+        OpenTelemetry.Span.set_attribute(
+          k,
+          OpenTelemetry.SpanUtils.string(v) |> :unicode.characters_to_binary()
+        )
       end)
     end
   end
@@ -17,7 +20,7 @@ defmodule OpenTelemetry.SpanUtils do
 
   def map_to_paths([], acc), do: acc
 
-  def map_to_paths([{key, %NaiveDateTime{}=value} | ms], acc) do
+  def map_to_paths([{key, %NaiveDateTime{} = value} | ms], acc) do
     map_to_paths(ms, [{key, NaiveDateTime.to_iso8601(value)} | acc])
   end
 
@@ -25,7 +28,7 @@ defmodule OpenTelemetry.SpanUtils do
     map_to_paths(
       ms,
       value
-      |> Enum.with_index
+      |> Enum.with_index()
       |> Enum.flat_map(fn {v, i} ->
         map_to_paths(v)
         |> Enum.map(fn {k, v2} -> {"#{key}.#{i}.#{k}", v2} end)

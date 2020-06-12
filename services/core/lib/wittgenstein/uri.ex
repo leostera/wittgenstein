@@ -62,4 +62,3 @@ defmodule Wittgenstein.Uri do
 
   defmacro expect(uri), do: quote(do: {_ns, _type, _uuid} = unquote(uri))
 end
-

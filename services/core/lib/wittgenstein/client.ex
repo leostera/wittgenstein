@@ -24,18 +24,18 @@ defmodule Wittgenstein.Client do
   def state_one(%Fact{} = fact) do
     Tracer.with_span "wittgenstein.client.state_one" do
       SpanUtils.set_attributes(%{fact: fact |> Fact.to_map()})
-    entity_uri = Fact.entity_uri(fact)
-    :ok = Store.persist_fact(fact)
+      entity_uri = Fact.entity_uri(fact)
+      :ok = Store.persist_fact(fact)
 
-    entity =
-      case Store.fetch_entity(entity_uri) do
-        {:error, :uri_not_found} -> Entity.new(entity_uri)
-        {:ok, entity} -> entity
-      end
+      entity =
+        case Store.fetch_entity(entity_uri) do
+          {:error, :uri_not_found} -> Entity.new(entity_uri)
+          {:ok, entity} -> entity
+        end
 
-    {:ok, new_entity} = Consolidation.apply_fact(entity, fact)
-    :ok = Store.persist_entity(new_entity)
-    :ok = Projection.project(entity_uri)
+      {:ok, new_entity} = Consolidation.apply_fact(entity, fact)
+      :ok = Store.persist_entity(new_entity)
+      :ok = Projection.project(entity_uri)
     end
   end
 
