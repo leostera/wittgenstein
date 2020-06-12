@@ -23,8 +23,7 @@ defmodule Wittgenstein.MixProject do
         "dialyzer --halt-exit-status",
         "credo --strict",
         "format --check-formatted --dry-run",
-        "hex.audit",
-        "sobelow --config"
+        "hex.audit"
       ]
     ]
   end
