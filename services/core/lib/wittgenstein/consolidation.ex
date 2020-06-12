@@ -3,7 +3,8 @@ defmodule Wittgenstein.Consolidation do
   alias Wittgenstein.Model.Fact
   alias Wittgenstein.Model.Entity
 
-  def apply_fact(%Entity{} = e, %Fact{} = f) do
+  @spec apply_fact(Entity.t(), Fact.t()) :: {:ok, Entity.t()} | {:error, term()}
+  def apply_fact(e, f) do
     Config.consolidation_strategy().consolidate(e, f)
   end
 end

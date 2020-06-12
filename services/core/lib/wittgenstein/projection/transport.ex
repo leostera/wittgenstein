@@ -1,4 +1,6 @@
 defmodule Wittgenstein.Projection.Transport do
+  alias Wittgenstein.Uri
+
   defmodule Sender do
     @callback project(Uri.t()) :: :ok | {:error, term()}
     defmacro __using__(_opts) do

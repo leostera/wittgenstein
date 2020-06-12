@@ -12,6 +12,7 @@ defmodule Wittgenstein.MixProject do
       name: "Wittgenstein",
       source_url: "https://github.com/AbstractMachinesLab/wittgenstein",
       homepage_url: "https://abstractmachines.dev/wittgenstein",
+      dialyzer: dialyzer(),
       aliases: aliases()
     ]
   end
@@ -48,4 +49,11 @@ defmodule Wittgenstein.MixProject do
       {:uuid, "~> 1.1"}
     ]
   end
+
+  defp dialyzer do
+    [
+      plt_add_apps: [:mix, :ecto, :uuid]
+    ]
+  end
+
 end

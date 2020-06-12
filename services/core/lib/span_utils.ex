@@ -14,7 +14,8 @@ defmodule OpenTelemetry.SpanUtils do
 
   def string(x) when is_binary(x), do: x
   def string(x) when is_atom(x), do: Atom.to_string(x)
-  def string(x) when is_number(x), do: Number.to_string(x)
+  def string(x) when is_integer(x), do: Integer.to_string(x)
+  def string(x) when is_float(x), do: Float.to_string(x)
 
   def map_to_paths(m) when is_map(m), do: m |> Map.to_list() |> map_to_paths([])
 

@@ -1,12 +1,14 @@
 defmodule Wittgenstein.Consolidation.Strategy.LastFactWins do
-  @behaviour Wittgenstein.Consolidation.Strategy
+  use Wittgenstein.Consolidation.Strategy
+
   alias Wittgenstein.Model.Fact
   alias Wittgenstein.Model.Entity
 
-  def consolidate(%Entity{} = entity, %Fact{} = new_fact) do
+  @spec consolidate(Entity.t(), Fact.t()) :: {:ok, Entity.t()} | {:error, term()}
+  def consolidate(entity, new_fact) do
     case Entity.uri(entity) == Fact.entity_uri(new_fact) do
       true -> do_consolidate(entity, new_fact)
-      false -> entity
+      false -> {:ok, entity}
     end
   end
 

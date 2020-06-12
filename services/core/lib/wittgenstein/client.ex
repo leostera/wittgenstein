@@ -17,16 +17,15 @@ defmodule Wittgenstein.Client do
   alias Wittgenstein.Store
   alias Wittgenstein.Consolidation
   alias Wittgenstein.Projection
+  alias Wittgenstein.Uri
 
-  def state(%Fact{} = fact), do: state_one(fact)
-  def state(facts), do: Stream.map(facts, &state_one/1)
-
-  def state_one(%Fact{} = fact) do
-    Tracer.with_span "wittgenstein.client.state_one" do
+  @spec state(Fact.t()) :: :ok | {:error, term()}
+  def state(fact) do
+    Tracer.with_span "wittgenstein.client.state" do
       SpanUtils.set_attributes(%{fact: fact |> Fact.to_map()})
-      entity_uri = Fact.entity_uri(fact)
       :ok = Store.persist_fact(fact)
 
+      entity_uri = Fact.entity_uri(fact)
       entity =
         case Store.fetch_entity(entity_uri) do
           {:error, :uri_not_found} -> Entity.new(entity_uri)
@@ -36,6 +35,7 @@ defmodule Wittgenstein.Client do
       {:ok, new_entity} = Consolidation.apply_fact(entity, fact)
       :ok = Store.persist_entity(new_entity)
       :ok = Projection.project(entity_uri)
+      :ok
     end
   end
 

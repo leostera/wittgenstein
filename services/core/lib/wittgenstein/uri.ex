@@ -5,7 +5,7 @@ defmodule Wittgenstein.Uri do
 
   """
 
-  @opaque t() :: {atom(), atom(), term() | UUID.t()}
+  @opaque t() :: {atom(), atom(), binary()}
 
   @spec kind(t()) :: atom()
   def kind({_, atom, _}), do: atom
@@ -45,6 +45,8 @@ defmodule Wittgenstein.Uri do
          kind <- String.to_existing_atom(kind),
          uri <- {ns, kind, id} do
       {:ok, uri}
+    else
+      _ -> {:error, :invalid_uri}
     end
   end
 

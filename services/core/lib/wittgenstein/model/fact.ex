@@ -35,21 +35,43 @@ defmodule Wittgenstein.Model.Fact do
     }
   end
 
+  @spec entity_uri(t()) :: Uri.t()
   def entity_uri(%__MODULE__{entity_uri: x}), do: x
+
+  @spec field(t()) :: String.t()
   def field(%__MODULE__{field: x}), do: x
+
+  @spec source_uri(t()) :: Uri.t()
   def source_uri(%__MODULE__{source_uri: x}), do: x
+
+  @spec stated_at(t()) :: NaiveDateTime.t()
   def stated_at(%__MODULE__{stated_at: x}), do: x
+
+  @spec uri(t()) :: Uri.t()
   def uri(%__MODULE__{uri: x}), do: x
+
+  @spec value(t()) :: String.t()
   def value(%__MODULE__{value: x}), do: x
 
+  @spec set_entity_uri(t(), Uri.t()) :: t()
   def set_entity_uri(%__MODULE__{} = f, x), do: %{f | entity_uri: x}
+
+  @spec set_field(t(), String.t()) :: t()
   def set_field(%__MODULE__{} = f, x), do: %{f | field: x}
+
+  @spec set_source_uri(t(), Uri.t()) :: t()
   def set_source_uri(%__MODULE__{} = f, x), do: %{f | source_uri: x}
+
+  @spec set_stated_at(t(), NaiveDateTime.t()) :: t()
   def set_stated_at(%__MODULE__{} = f, x), do: %{f | stated_at: x}
+
+  @spec set_uri(t(), Uri.t()) :: t()
   def set_uri(%__MODULE__{} = f, x), do: %{f | uri: x}
+
+  @spec set_value(t(), String.t()) :: t()
   def set_value(%__MODULE__{} = f, x), do: %{f | value: x}
 
-  @spec to_map(t()) :: Map.t()
+  @spec to_map(t()) :: map()
   def to_map(f) do
     f
     |> Map.from_struct()
@@ -58,10 +80,11 @@ defmodule Wittgenstein.Model.Fact do
     |> Map.update!(:entity_uri, &Uri.to_string/1)
   end
 
+  @spec from_map(map()) :: {:ok, t()} | {:error, :invalid_fact_map}
   def from_map(map) when is_map(map) do
     case apply_action(changeset(map), :insert) do
       {:error, changeset} ->
-        {:error, {:invalid_entity_map, changeset}}
+        {:error, {:invalid_fact_map, changeset}}
 
       {:ok, entity} ->
         {:ok, entity}

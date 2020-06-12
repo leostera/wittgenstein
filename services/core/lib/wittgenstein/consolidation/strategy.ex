@@ -4,4 +4,10 @@ defmodule Wittgenstein.Consolidation.Strategy do
 
   @callback consolidate(Entity.t(), Fact.t()) ::
               {:ok, Entity.t()} | {:error, term()}
+
+  defmacro __using__(_opts \\ []) do
+    quote do
+      @behaviour Wittgenstein.Consolidation.Strategy
+    end
+  end
 end
