@@ -5,13 +5,13 @@ defmodule Wittgenstein.Model.Fact do
 
   alias Wittgenstein.Uri
 
-  @opaque t() :: %{
-            required(:entity_uri) => Uri.t() | :none,
-            required(:field) => binary() | :none,
-            required(:source_uri) => Uri.t() | :none,
-            required(:stated_at) => NaiveDateTime.t(),
-            required(:uri) => Uri.t(),
-            required(:value) => term() | :none
+  @opaque t() :: %__MODULE__{
+            entity_uri: Uri.t() | :none,
+            field: binary() | :none,
+            source_uri: Uri.t() | :none,
+            stated_at: NaiveDateTime.t(),
+            uri: Uri.t(),
+            value: term() | :none
           }
 
   @primary_key false

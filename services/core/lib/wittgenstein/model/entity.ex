@@ -7,11 +7,11 @@ defmodule Wittgenstein.Model.Entity do
   alias Wittgenstein.Uri
   alias Wittgenstein.Model.Fact
 
-  @opaque t() :: %{
-            required(:uri) => Uri.t(),
-            required(:namespace) => Atom.t(),
-            required(:kind) => Atom.t(),
-            required(:values) => [Fact.t()]
+  @opaque t() :: %__MODULE__{
+            uri: Uri.t(),
+            namespace: Atom.t(),
+            kind: Atom.t(),
+            values: [Fact.t()]
           }
 
   @primary_key false
