@@ -1,0 +1,34 @@
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "dev.abstractmachines.wittgenstein";
+option java_outer_classname = "WittgensteinGrpc";
+option objc_class_prefix = "WGN";
+
+package dev.abstractmachines.wittgenstein;
+
+service Wittgenstein {
+  rpc StateFact (StateFactRequest) returns (StateFactReply) {}
+  rpc LookupEntity (LookupEntityRequest) returns (LookupEntityReply) {}
+}
+
+message StateFactRequest {
+  string entity_uri = 2;
+  string source_uri = 3;
+  string field = 4;
+  string value = 5;
+}
+
+message StateFactReply {
+  oneof respose {
+    string fact_uri = 1;
+    string error = 2;
+  }
+
+}
+
+message LookupEntityRequest {
+}
+
+message LookupEntityReply {
+}
