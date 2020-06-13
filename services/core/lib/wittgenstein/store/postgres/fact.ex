@@ -27,12 +27,13 @@ defmodule Wittgenstein.Store.Postgres.Fact do
   def from_model(fact) do
     fields = Fact.to_map(fact)
 
-    changeset =
+    {:ok, record} =
       %__MODULE__{}
       |> cast(fields, @fields)
       |> validate_required(@fields)
+      |> apply_action(:create)
 
-    {:ok, changeset}
+    {:ok, record |> Map.from_struct() |> Map.delete(:__meta__)}
   end
 
   @spec to_model(%__MODULE__{}) :: Fact.t()

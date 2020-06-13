@@ -24,28 +24,35 @@ defmodule Wittgenstein.Client do
   def state(facts) do
     Tracer.with_span "wittgenstein.client.state" do
       Span.set_attribute(:fact_count, Enum.count(facts))
+      SpanUtils.set_attributes(%{facts: facts |> Enum.map(&Fact.to_map/1)})
 
-      entity_uris =
-        facts
-        |> Enum.map(fn fact ->
-          Tracer.with_span "wittgenstein.client.state_one" do
-            SpanUtils.set_attributes(%{fact: fact |> Fact.to_map()})
-            :ok = Store.persist_fact(fact)
+      :ok = Store.persist_facts(facts)
 
-            entity_uri = Fact.entity_uri(fact)
-
-            entity =
-              case Store.fetch_entity(entity_uri) do
-                {:error, :uri_not_found} -> Entity.new(entity_uri)
-                {:ok, entity} -> entity
-              end
-
-            {:ok, new_entity} = Consolidation.apply_fact(entity, fact)
-            :ok = Store.persist_entity(new_entity)
-
-            entity_uri
-          end
+      facts_by_entity_uri =
+        Enum.reduce(facts, %{}, fn fact, entities ->
+          entities
+          |> Map.update(
+            Fact.entity_uri(fact),
+            [],
+            fn last_value -> [fact | last_value] end
+          )
         end)
+
+      facts_by_entity_uri
+      |> Map.to_list()
+      |> Enum.map(fn {entity_uri, entity_facts} ->
+        entity =
+          case Store.fetch_entity(entity_uri) do
+            {:error, :uri_not_found} -> Entity.new(entity_uri)
+            {:ok, entity} -> entity
+          end
+
+        {:ok, new_entity} = Consolidation.apply_facts(entity, facts)
+
+        :ok = Store.persist_entity(new_entity)
+      end)
+
+      entity_uris = facts_by_entity_uri |> Map.keys()
 
       SpanUtils.set_attributes(%{entities: entity_uris |> Enum.map(&Uri.to_string/1)})
 

@@ -4,6 +4,7 @@ defmodule Wittgenstein.Store.Postgres do
   require OpenTelemetry.Span
   require OpenTelemetry.SpanUtils
   alias OpenTelemetry.Tracer
+  alias OpenTelemetry.Span
   alias OpenTelemetry.SpanUtils
 
   use Ecto.Repo, otp_app: :wittgenstein, adapter: Ecto.Adapters.Postgres
@@ -14,13 +15,19 @@ defmodule Wittgenstein.Store.Postgres do
   alias Wittgenstein.Store.Postgres
   alias Wittgenstein.Uri
 
-  @spec persist_fact(Fact.t()) :: :ok | {:error, term()}
-  def persist_fact(fact) do
+  @spec persist_facts([Fact.t()]) :: :ok | {:error, term()}
+  def persist_facts(facts) do
     Tracer.with_span "wittgenstein.store.postgres.persist_fact" do
-      SpanUtils.set_attributes(%{fact: fact |> Fact.to_map()})
+      records =
+        facts
+        |> Enum.map(fn fact ->
+          {:ok, fact_record} = fact |> Postgres.Fact.from_model() |> IO.inspect()
+          fact_record
+        end)
 
-      {:ok, fact_record} = fact |> Postgres.Fact.from_model()
-      {:ok, _} = __MODULE__.insert(fact_record)
+      {fact_count, _} = __MODULE__.insert_all(Postgres.Fact, records)
+
+      Span.set_attribute(:fact_count, fact_count |> Integer.to_string())
 
       :ok
     end

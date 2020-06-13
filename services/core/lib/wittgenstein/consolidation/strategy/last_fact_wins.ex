@@ -4,12 +4,18 @@ defmodule Wittgenstein.Consolidation.Strategy.LastFactWins do
   alias Wittgenstein.Model.Fact
   alias Wittgenstein.Model.Entity
 
-  @spec consolidate(Entity.t(), Fact.t()) :: {:ok, Entity.t()} | {:error, term()}
-  def consolidate(entity, new_fact) do
-    case Entity.uri(entity) == Fact.entity_uri(new_fact) do
-      true -> do_consolidate(entity, new_fact)
-      false -> {:ok, entity}
-    end
+  @spec consolidate(Entity.t(), [Fact.t()]) :: {:ok, Entity.t()} | {:error, term()}
+  def consolidate(entity, new_facts) do
+    entity =
+      Enum.reduce(new_facts, entity, fn
+        new_fact, entity ->
+          case Entity.uri(entity) == Fact.entity_uri(new_fact) do
+            true -> do_consolidate(entity, new_fact)
+            false -> entity
+          end
+      end)
+
+    {:ok, entity}
   end
 
   defp do_consolidate(entity, new_fact) do
@@ -26,7 +32,7 @@ defmodule Wittgenstein.Consolidation.Strategy.LastFactWins do
           replace_old_fact_with_new(old_values, new_fact)
       end
 
-    {:ok, entity |> Entity.set_values(new_values)}
+    entity |> Entity.set_values(new_values)
   end
 
   defp replace_old_fact_with_new(old_values, new_fact) do

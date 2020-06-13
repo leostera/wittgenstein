@@ -7,8 +7,8 @@ defmodule Wittgenstein.Store.InMemory do
 
   @behaviour Wittgenstein.Store
 
-  @spec persist_fact(Fact.t()) :: :ok | {:error, term()}
-  def persist_fact(f), do: GenServer.call(__MODULE__, persist_fact: f)
+  @spec persist_facts([Fact.t()]) :: :ok | {:error, term()}
+  def persist_facts(f), do: GenServer.call(__MODULE__, persist_facts: f)
 
   @spec persist_entity(Entity.t()) :: :ok | {:error, term()}
   def persist_entity(e), do: GenServer.call(__MODULE__, persist_entity: e)
@@ -27,13 +27,17 @@ defmodule Wittgenstein.Store.InMemory do
     {:ok, %{facts: facts, entities: entities}}
   end
 
-  def handle_call([persist_fact: f], _, s), do: do_persist_fact(f, s)
+  def handle_call([persist_facts: f], _, s), do: do_persist_facts(f, s)
   def handle_call([persist_entity: e], _, s), do: do_persist_entity(e, s)
   def handle_call([fetch_entity: uri], _, s), do: do_fetch_entity(uri, s)
 
-  def do_persist_fact(fact, %{facts: facts} = state) do
-    uri = fact |> Fact.uri()
-    :ets.insert(facts, {uri, fact})
+  def do_persist_facts(new_facts, %{facts: facts} = state) do
+    new_facts
+    |> Enum.each(fn fact ->
+      uri = fact |> Fact.uri()
+      :ets.insert(facts, {uri, fact})
+    end)
+
     {:reply, :ok, state}
   end
 

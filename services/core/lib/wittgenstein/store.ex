@@ -4,12 +4,12 @@ defmodule Wittgenstein.Store do
   alias Wittgenstein.Model.Fact
   alias Wittgenstein.Model.Entity
 
-  @callback persist_fact(Fact.t()) :: :ok | {:error, term()}
+  @callback persist_facts([Fact.t()]) :: :ok | {:error, term()}
   @callback persist_entity(Entity.t()) :: :ok | {:error, term()}
   @callback fetch_entity(Uri.t()) :: {:ok, Entity.t()} | {:error, term()}
 
-  @spec persist_fact(Fact.t()) :: :ok | {:error, term()}
-  def persist_fact(f), do: Config.store_backend().persist_fact(f)
+  @spec persist_facts([Fact.t()]) :: :ok | {:error, term()}
+  def persist_facts(f), do: Config.store_backend().persist_facts(f)
 
   @spec persist_entity(Entity.t()) :: :ok | {:error, term()}
   def persist_entity(e), do: Config.store_backend().persist_entity(e)

@@ -13,14 +13,14 @@ defmodule Wittgenstein.Consolidation do
   alias Wittgenstein.Model.Fact
   alias Wittgenstein.Model.Entity
 
-  @spec apply_fact(Entity.t(), Fact.t()) :: {:ok, Entity.t()} | {:error, term()}
-  def apply_fact(entity, fact) do
-    apply_fact_with_strategy(Config.consolidation_strategy(), entity, fact)
+  @spec apply_facts(Entity.t(), [Fact.t()]) :: {:ok, Entity.t()} | {:error, term()}
+  def apply_facts(entity, facts) do
+    apply_facts_with_strategy(Config.consolidation_strategy(), entity, facts)
   end
 
-  @spec apply_fact_with_strategy(atom(), Entity.t(), Fact.t()) ::
+  @spec apply_facts_with_strategy(atom(), Entity.t(), [Fact.t()]) ::
           {:ok, Entity.t()} | {:error, term()}
-  def apply_fact_with_strategy(strategy, entity, fact) do
-    strategy.consolidate(entity, fact)
+  def apply_facts_with_strategy(strategy, entity, facts) do
+    strategy.consolidate(entity, facts)
   end
 end
