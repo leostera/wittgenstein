@@ -10,6 +10,7 @@ defmodule Wittgenstein.Client do
   require OpenTelemetry.Span
   require OpenTelemetry.SpanUtils
   alias OpenTelemetry.Tracer
+  alias OpenTelemetry.Span
   alias OpenTelemetry.SpanUtils
 
   alias Wittgenstein.Model.Fact
@@ -19,24 +20,36 @@ defmodule Wittgenstein.Client do
   alias Wittgenstein.Projection
   alias Wittgenstein.Uri
 
-  @spec state(Fact.t()) :: :ok | {:error, term()}
-  def state(fact) do
+  @spec state([Fact.t()]) :: :ok | {:error, term()}
+  def state(facts) do
     Tracer.with_span "wittgenstein.client.state" do
-      SpanUtils.set_attributes(%{fact: fact |> Fact.to_map()})
-      :ok = Store.persist_fact(fact)
+      Span.set_attribute(:fact_count, Enum.count(facts))
 
-      entity_uri = Fact.entity_uri(fact)
+      entity_uris =
+        facts
+        |> Enum.map(fn fact ->
+          Tracer.with_span "wittgenstein.client.state_one" do
+            SpanUtils.set_attributes(%{fact: fact |> Fact.to_map()})
+            :ok = Store.persist_fact(fact)
 
-      entity =
-        case Store.fetch_entity(entity_uri) do
-          {:error, :uri_not_found} -> Entity.new(entity_uri)
-          {:ok, entity} -> entity
-        end
+            entity_uri = Fact.entity_uri(fact)
 
-      {:ok, new_entity} = Consolidation.apply_fact(entity, fact)
-      :ok = Store.persist_entity(new_entity)
-      :ok = Projection.project(entity_uri)
-      :ok
+            entity =
+              case Store.fetch_entity(entity_uri) do
+                {:error, :uri_not_found} -> Entity.new(entity_uri)
+                {:ok, entity} -> entity
+              end
+
+            {:ok, new_entity} = Consolidation.apply_fact(entity, fact)
+            :ok = Store.persist_entity(new_entity)
+
+            entity_uri
+          end
+        end)
+
+      SpanUtils.set_attributes(%{entities: entity_uris |> Enum.map(&Uri.to_string/1)})
+
+      Enum.each(entity_uris, &Projection.project/1)
     end
   end
 
