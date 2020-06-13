@@ -30,11 +30,14 @@ defmodule OpenTelemetry.SpanUtils do
       ms,
       value
       |> Enum.with_index()
-      |> Enum.flat_map(fn {v, i} ->
+      |> Enum.map(fn {v, i} when is_map(v)->
         v
         |> map_to_paths()
         |> Enum.map(fn {k, v2} -> {"#{key}.#{i}.#{k}", v2} end)
+
+        {v, i} -> {"#{key}.#{i}", v}
       end)
+      |> List.flatten()
       |> Enum.concat(acc)
     )
   end

@@ -18,7 +18,8 @@ defmodule Wittgenstein.Consolidation do
     apply_fact_with_strategy(Config.consolidation_strategy(), entity, fact)
   end
 
-  @spec apply_fact_with_strategy(atom(), Entity.t(), Fact.t()) :: {:ok, Entity.t()} | {:error, term()}
+  @spec apply_fact_with_strategy(atom(), Entity.t(), Fact.t()) ::
+          {:ok, Entity.t()} | {:error, term()}
   def apply_fact_with_strategy(strategy, entity, fact) do
     strategy.consolidate(entity, fact)
   end
