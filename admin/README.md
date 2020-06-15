@@ -1,25 +1,18 @@
-# Admin
+# WittgensteinAdmin
 
-Features:
+To start your Phoenix server:
 
-* can 
+  * Setup the project with `mix setup`
+  * Start Phoenix endpoint with `mix phx.server`
 
-* can search for entities
+Now you can visit [`localhost:4000`](http://localhost:4000) from your browser.
 
-  will need
-    a projection to elasticsearch
-    elasticsearch up and running
-    query for searching
+Ready to run in production? Please [check our deployment guides](https://hexdocs.pm/phoenix/deployment.html).
 
-    POST /api/v1/projections/search/
-    <query>
-  
+## Learn more
 
-* can view entities
-  
-  will need
-    a projection for view 
-
-* can update entities (state facts)
-
-1. Web application 
+  * Official website: https://www.phoenixframework.org/
+  * Guides: https://hexdocs.pm/phoenix/overview.html
+  * Docs: https://hexdocs.pm/phoenix
+  * Forum: https://elixirforum.com/c/phoenix-forum
+  * Source: https://github.com/phoenixframework/phoenix
