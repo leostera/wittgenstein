@@ -1,0 +1,38 @@
+syntax = "proto3";
+
+package dev.abstractmachines.wittgenstein;
+
+service FactDB {
+  rpc StateFact (StateFactRequest) returns (StateFactReply) {}
+  rpc StateFacts (stream StateFactRequest) returns (stream StateFactReply) {}
+  rpc LookupEntity (LookupEntityRequest) returns (LookupEntityReply) {}
+
+  rpc Project(ProjectionDescription) returns (stream ProjectedEntity) {}
+}
+
+message ProjectionDescription {}
+
+message ProjectedEntity {
+  string entity_uri = 1;
+  map<string, string> fields = 2;
+}
+
+message StateFactRequest {
+  string entity_uri = 2;
+  string source_uri = 3;
+  string field_uri = 4;
+  string value = 5;
+}
+
+message StateFactReply {
+  oneof response {
+    string fact_uri = 1;
+    string error = 2;
+  }
+}
+
+message LookupEntityRequest {
+}
+
+message LookupEntityReply {
+}
