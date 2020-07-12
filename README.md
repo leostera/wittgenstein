@@ -3,8 +3,7 @@
 
 ## Repository Structure
 
-* `clients/cli` has the cli client to talk to an instance of Wittgenstein
-* `examples/starwars` is a lifelike example of using the database
-* `services/core` is the core system
-* `services/grpc` is the grpc layer to interact with the system
-* `spec/` has the formal specification of the system in TLA+
+* `/factdb` is the core semantic database of Wittgenstein
+* `/schemata` has the definitions of all the schemas used across the repos
+* `/spec` has the formal specification of the system in TLA+
+* `/tools` has a bunch of assorted cli tools for importing and exporting data
