@@ -1,15 +1,8 @@
-#!/bin/sh -xe
+#!/bin/sh
 
-ENV=$(env | sort -u)
 
 echo "================== Environment ====================="
-echo ${ENV}
+env | sort -u
 echo "===================================================="
 
-/factdb/bin/factdb daemon
-
-mkdir -p /factdb/tmp/log
-
-sleep 1
-
-tail -f /factdb/tmp/log/*
+exec /factdb/bin/factdb start

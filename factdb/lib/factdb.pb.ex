@@ -16,8 +16,8 @@ defmodule Dev.Abstractmachines.Wittgenstein.ProjectedEntity.FieldsEntry do
         }
   defstruct [:key, :value]
 
-  field(:key, 1, type: :string)
-  field(:value, 2, type: :string)
+  field :key, 1, type: :string
+  field :value, 2, type: :string
 end
 
 defmodule Dev.Abstractmachines.Wittgenstein.ProjectedEntity do
@@ -30,13 +30,12 @@ defmodule Dev.Abstractmachines.Wittgenstein.ProjectedEntity do
         }
   defstruct [:entity_uri, :fields]
 
-  field(:entity_uri, 1, type: :string)
+  field :entity_uri, 1, type: :string
 
-  field(:fields, 2,
+  field :fields, 2,
     repeated: true,
     type: Dev.Abstractmachines.Wittgenstein.ProjectedEntity.FieldsEntry,
     map: true
-  )
 end
 
 defmodule Dev.Abstractmachines.Wittgenstein.StateFactRequest do
@@ -51,10 +50,10 @@ defmodule Dev.Abstractmachines.Wittgenstein.StateFactRequest do
         }
   defstruct [:entity_uri, :source_uri, :field_uri, :value]
 
-  field(:entity_uri, 2, type: :string)
-  field(:source_uri, 3, type: :string)
-  field(:field_uri, 4, type: :string)
-  field(:value, 5, type: :string)
+  field :entity_uri, 2, type: :string
+  field :source_uri, 3, type: :string
+  field :field_uri, 4, type: :string
+  field :value, 5, type: :string
 end
 
 defmodule Dev.Abstractmachines.Wittgenstein.StateFactReply do
@@ -66,9 +65,9 @@ defmodule Dev.Abstractmachines.Wittgenstein.StateFactReply do
         }
   defstruct [:response]
 
-  oneof(:response, 0)
-  field(:fact_uri, 1, type: :string, oneof: 0)
-  field(:error, 2, type: :string, oneof: 0)
+  oneof :response, 0
+  field :fact_uri, 1, type: :string, oneof: 0
+  field :error, 2, type: :string, oneof: 0
 end
 
 defmodule Dev.Abstractmachines.Wittgenstein.LookupEntityRequest do
@@ -91,29 +90,21 @@ defmodule Dev.Abstractmachines.Wittgenstein.FactDB.Service do
   @moduledoc false
   use GRPC.Service, name: "dev.abstractmachines.wittgenstein.FactDB"
 
-  rpc(
-    :StateFact,
-    Dev.Abstractmachines.Wittgenstein.StateFactRequest,
-    Dev.Abstractmachines.Wittgenstein.StateFactReply
-  )
+  rpc :StateFact,
+      Dev.Abstractmachines.Wittgenstein.StateFactRequest,
+      Dev.Abstractmachines.Wittgenstein.StateFactReply
 
-  rpc(
-    :StateFacts,
-    stream(Dev.Abstractmachines.Wittgenstein.StateFactRequest),
-    stream(Dev.Abstractmachines.Wittgenstein.StateFactReply)
-  )
+  rpc :StateFacts,
+      stream(Dev.Abstractmachines.Wittgenstein.StateFactRequest),
+      stream(Dev.Abstractmachines.Wittgenstein.StateFactReply)
 
-  rpc(
-    :LookupEntity,
-    Dev.Abstractmachines.Wittgenstein.LookupEntityRequest,
-    Dev.Abstractmachines.Wittgenstein.LookupEntityReply
-  )
+  rpc :LookupEntity,
+      Dev.Abstractmachines.Wittgenstein.LookupEntityRequest,
+      Dev.Abstractmachines.Wittgenstein.LookupEntityReply
 
-  rpc(
-    :Project,
-    Dev.Abstractmachines.Wittgenstein.ProjectionDescription,
-    stream(Dev.Abstractmachines.Wittgenstein.ProjectedEntity)
-  )
+  rpc :Project,
+      Dev.Abstractmachines.Wittgenstein.ProjectionDescription,
+      stream(Dev.Abstractmachines.Wittgenstein.ProjectedEntity)
 end
 
 defmodule Dev.Abstractmachines.Wittgenstein.FactDB.Stub do

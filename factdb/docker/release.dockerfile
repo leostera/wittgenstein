@@ -1,6 +1,6 @@
 FROM alpine:3.12
 
-RUN apk --update add ncurses && rm -rf /var/cache/apk/*
+RUN apk --update add ncurses g++ && rm -rf /var/cache/apk/*
 
 WORKDIR factdb
 

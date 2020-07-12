@@ -4,9 +4,10 @@ export
 # Common Postgres setup.
 #################################################################################
 
+BUILDSTAMP=$(shell date -Is | sed 's/://g; s/-//g; s/+//g')
 GIT_COMMIT=$(shell git rev-parse --short HEAD)
 VERSION=$(shell cat mix.exs| grep version | awk -F' ' '{ print $$2 }' | sed 's/[\"|,]//g')
-IMAGE_NAME=registry.mainframe-0:32000/wittgenstein/factdb:$(VERSION)-$(GIT_COMMIT)
+IMAGE_NAME=registry.mainframe-0:32000/wittgenstein/factdb:$(VERSION)-$(GIT_COMMIT)-$(BUILDSTAMP)
 
 #################################################################################
 # Service Specific Env

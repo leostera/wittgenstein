@@ -48,8 +48,8 @@ run_query(Query) ->
   {ok, Client} = cqerl:get_client(),
   cqerl:run_query(Client, Query).
 
-query__create_keyspace_if_not_exists() ->
-  "CREATE KEYSPACE wittgenstein WITH replication = {'class': 'SimpleStrategy', 'replication_factor': 1 };".
+% query__create_keyspace_if_not_exists() ->
+%   "CREATE KEYSPACE wittgenstein WITH replication = {'class': 'SimpleStrategy', 'replication_factor': 1 };".
 
 query__select_facts_by_entity_uri(EntityUri) ->
   #cql_query{

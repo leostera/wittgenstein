@@ -28,7 +28,7 @@ do_handle_message(Messages) ->
     ok = fdb_store:store_facts(Facts),
     T1 = erlang:system_time() - T0,
     io:format("ts=~p stored ~p batches with ~p facts in ~pms\n",
-              [ erlang:system_time(), length(Messages), length(Facts), T1 / 1_000_000.0]),
+              [ erlang:system_time(), length(Messages), length(Facts), T1 / 1000000.0]),
 
     T2 = erlang:system_time(),
     UriSet = sets:from_list([ fdb_fact:entity_uri(F) || F <- Facts ]),
@@ -36,7 +36,7 @@ do_handle_message(Messages) ->
     ok = factdb:project(Uris),
     T3 = erlang:system_time() - T2,
     io:format("ts=~p projected ~p entities in ~pms\n",
-              [ erlang:system_time(), length(Uris), T3 / 1_000_000.0])
+              [ erlang:system_time(), length(Uris), T3 / 1000000.0])
   end, Batches).
 
 start() ->
