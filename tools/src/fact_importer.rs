@@ -23,6 +23,9 @@ pub mod wittgenstein {
 #[derive(StructOpt, Debug, Clone)]
 #[structopt(name = "fact-importer")]
 struct Opt {
+    #[structopt(short = "u", long = "factdb-url", name = "FACTDB_URL")]
+    factdb_url: String,
+
     #[structopt(
         short = "f",
         long = "file-path",
@@ -42,7 +45,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     println!("{:#?}", opt);
     println!("=======================");
 
-    let mut client = FactDbClient::connect("http://0.0.0.0:50051").await?;
+    let mut client = FactDbClient::connect(opt.factdb_url.clone()).await?;
 
     state_facts(&mut client, opt.clone()).await?;
 

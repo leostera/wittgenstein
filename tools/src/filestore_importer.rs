@@ -15,7 +15,10 @@ pub mod wittgenstein {
 
 #[derive(StructOpt, Debug, Clone)]
 #[structopt(name = "filestore-importer")]
-struct Opt {}
+struct Opt {
+    #[structopt(short = "u", long = "factdb-url", name = "FACTDB_URL")]
+    factdb_url: String,
+}
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
@@ -46,7 +49,8 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         .subscribe(&["foundation.minio.notifications"])
         .expect("Could not subscribe to minio notifications topic!");
 
-    let mut client = FactDbClient::connect("http://0.0.0.0:50051").await?;
+    let mut client = FactDbClient::connect(opt.factdb_url).await?;
+
     for borrowed_message in consumer.iter() {
         match borrowed_message {
             Ok(borrowed_message) => {

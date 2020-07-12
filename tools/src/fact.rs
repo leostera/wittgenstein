@@ -10,6 +10,9 @@ pub mod wittgenstein {
 #[derive(StructOpt, Debug)]
 #[structopt(name = "fact")]
 struct Opt {
+    #[structopt(short = "u", long = "factdb-url", name = "FACTDB_URL")]
+    factdb_url: String,
+
     #[structopt(short = "s", long = "source-uri", name = "SOURCE_URI")]
     source_uri: String,
 
@@ -38,7 +41,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         value: opt.value,
     };
 
-    let mut client = FactDbClient::connect("http://0.0.0.0:50051").await?;
+    let mut client = FactDbClient::connect(opt.factdb_url).await?;
 
     client.state_fact(fact).await?;
 

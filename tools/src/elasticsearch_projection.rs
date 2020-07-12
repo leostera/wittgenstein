@@ -1,14 +1,10 @@
 use wittgenstein::fact_db_client::FactDbClient;
 use wittgenstein::ProjectionDescription;
 
-use std::error::Error;
-use std::time::Instant;
-use tonic::transport::Channel;
-
 use elasticsearch::http::transport::Transport;
 use elasticsearch::Elasticsearch;
 use elasticsearch::IndexParts;
-
+use std::time::Instant;
 use structopt::StructOpt;
 
 pub mod wittgenstein {
@@ -23,6 +19,9 @@ struct Opt {
 
     #[structopt(short = "i", long = "index-name", name = "INDEX_NAME")]
     index_name: String,
+
+    #[structopt(short = "u", long = "factdb-url", name = "FACTDB_URL")]
+    factdb_url: String,
 }
 
 #[tokio::main]
@@ -33,27 +32,17 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     println!("{:#?}", opt);
     println!("=======================");
 
-    let mut fact_client = FactDbClient::connect("http://0.0.0.0:50051").await?;
+    let mut fact_client = FactDbClient::connect(opt.factdb_url).await?;
 
     let transport = Transport::single_node(&opt.elasticsearch_url)?;
-    let client = Elasticsearch::new(transport);
+    let es_client = Elasticsearch::new(transport);
 
-    stream_projected_entities(&mut fact_client, client, opt.index_name).await?;
-
-    Ok(())
-}
-
-async fn stream_projected_entities(
-    fact_client: &mut FactDbClient<Channel>,
-    es_client: Elasticsearch,
-    index_name: String,
-) -> Result<(), Box<dyn Error>> {
     let response = fact_client.project(ProjectionDescription {}).await?;
     let mut inbound = response.into_inner();
 
     while let Some(reply) = inbound.message().await? {
         let now = Instant::now();
-        let index = IndexParts::IndexId(&index_name, &reply.entity_uri);
+        let index = IndexParts::IndexId(&opt.index_name, &reply.entity_uri);
         es_client.index(index).body(reply.fields).send().await?;
         let delta = Instant::now().duration_since(now).as_millis();
         println!("indexed {} in {}ms", reply.entity_uri, delta);
