@@ -4,7 +4,7 @@ metadata:
   name: factdb
   namespace: wittgenstein
 spec:
-  replicas: 3
+  replicas: 1
   strategy:
     type: RollingUpdate
   selector:
@@ -14,6 +14,7 @@ spec:
     metadata:
       labels:
         app: factdb
+        abstractmachines.dev/runtime: erlang
     spec:
       initContainers:
         - name: factdb-setup
@@ -22,7 +23,7 @@ spec:
           args: ["-c", "cqlsh -e \"CREATE KEYSPACE IF NOT EXISTS wittgenstein WITH replication = {'class': 'SimpleStrategy', 'replication_factor': 2 };\" cassandra.foundation.svc.cluster.local"]
       containers:
         - name: factdb
-          image: registry.mainframe-0:32000/wittgenstein/factdb:0.1.1-9498adc-20200712T1211330200
+          image: registry.mainframe-0:32000/wittgenstein/factdb:0.1.1-cdde59c-20200712T1736190200
           env:
             - name: FACTDB_GRPC_PORT
               value: "50051"
