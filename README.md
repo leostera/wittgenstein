@@ -4,6 +4,7 @@
 ## Repository Structure
 
 * `/factdb` is the core semantic database of Wittgenstein
+* `/io` is where all the infrastructure and operation pieces live
 * `/schemata` has the definitions of all the schemas used across the repos
 * `/spec` has the formal specification of the system in TLA+
 * `/tools` has a bunch of assorted cli tools for importing and exporting data
