@@ -8,7 +8,7 @@ outbound_topic() -> <<"wittgenstein.factdb.outbound">>.
 
 client_id() -> factdb_kafka_client_0.
 
-partitions() -> [0].
+partitions() -> lists:seq(0, 10).
 
 hosts() -> [{"kafka-0.kafka.foundation.svc.cluster.local", 9092}
            ,{"kafka-1.kafka.foundation.svc.cluster.local", 9092}

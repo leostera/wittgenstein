@@ -16,7 +16,7 @@ state_facts(Facts) ->
   {ok, _Ref} = brod:produce(
                  fdb_kafka:client_id(),
                  fdb_kafka:inbound_topic(),
-                 _Partition = 0,
+                 _Partition = rand:uniform(length(fdb_kafka:partitions())),
                  BatchKey,
                  Binary),
   ok.
@@ -26,7 +26,7 @@ project_entity(Entity) ->
   {ok, _Ref} = brod:produce(
                  fdb_kafka:client_id(),
                  fdb_kafka:outbound_topic(),
-                 _Partition = 0,
+                 _Partition = rand:uniform(length(fdb_kafka:partitions())),
                  fdb_entity:uri(Entity),
                  Binary),
   ok.
