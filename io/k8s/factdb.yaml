@@ -1,0 +1,50 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: factdb
+  namespace: wittgenstein
+spec:
+  replicas: 3
+  strategy:
+    type: RollingUpdate
+  selector:
+    matchLabels:
+      app: factdb
+  template:
+    metadata:
+      labels:
+        app: factdb
+    spec:
+      initContainers:
+        - name: factdb-setup
+          image: cassandra
+          command: ["/bin/sh"]
+          args: ["-c", "cqlsh -e \"CREATE KEYSPACE IF NOT EXISTS wittgenstein WITH replication = {'class': 'SimpleStrategy', 'replication_factor': 2 };\" cassandra.foundation.svc.cluster.local"]
+      containers:
+        - name: factdb
+          image: registry.mainframe-0:32000/wittgenstein/factdb:0.1.1-9498adc-20200712T1211330200
+          env:
+            - name: FACTDB_GRPC_PORT
+              value: "50051"
+            - name: FACTDB_HEALTHZ_HTTP_PORT
+              value: "50050"
+            - name: FACTDB_OPENTELEMETRY_HOST
+              value: opentelemetry.foundation.svc.cluster.local
+            - name: FACTDB_OPENTELEMETRY_PORT
+              value: "9411"
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: factdb
+  namespace: wittgenstein
+spec:
+  selector:
+    app: factdb
+  type: LoadBalancer
+  ports:
+    - name: factdb-grpc
+      port: 80
+      targetPort: 50051
