@@ -1,0 +1,42 @@
+[package]
+name = "wittgenstein"
+version = "0.1.0"
+authors = ["Leandro Ostera <leandro@ostera.io>"]
+edition = "2018"
+
+[[bin]]
+name = "fact"
+path = "src/fact.rs"
+
+[[bin]]
+name = "fact-importer"
+path = "src/fact_importer.rs"
+
+[[bin]]
+name = "json-projection"
+path = "src/json_projection.rs"
+
+[[bin]]
+name = "elasticsearch-projection"
+path = "src/elasticsearch_projection.rs"
+
+[[bin]]
+name = "filestore-importer"
+path = "src/filestore_importer.rs"
+
+[dependencies]
+async-stream = "0.2"
+elasticsearch = "7.8.0-alpha.1"
+futures = { version = "0.3", default-features = false, features = ["alloc"] }
+json = "0.11.15"
+prost = "0.6"
+rdkafka = "0.23.1"
+rio_api = "0.4.2"
+rio_turtle = "0.4.2"
+structopt = "0.3"
+tokio = { version = "0.2", features = ["macros"] }
+tonic = "0.2"
+uuid = { version = "0.5", features = ["v4"] }
+
+[build-dependencies]
+tonic-build = "0.2"
