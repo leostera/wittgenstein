@@ -10,6 +10,8 @@ start_outbound() ->
   ok = brod:start_producer(fdb_kafka:client_id(), fdb_kafka:outbound_topic(), []).
 
 state_facts(Facts) ->
+  T0 = erlang:system_time(),
+
   [FirstFact|_] = Facts,
   Binary = erlang:term_to_binary(Facts),
   BatchKey = fdb_fact:uri(FirstFact),
@@ -19,6 +21,10 @@ state_facts(Facts) ->
                  _Partition = fdb_kafka:random_partition(),
                  BatchKey,
                  Binary),
+
+  T1 = erlang:system_time() - T0,
+  io:format("ts=~p produced batch with ~p facts in ~pms\n",
+            [ erlang:system_time(), length(Facts), T1 / 1000000.0]),
   ok.
 
 project_entity(Entity) ->

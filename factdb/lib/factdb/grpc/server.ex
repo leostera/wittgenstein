@@ -49,7 +49,7 @@ defmodule FactDB.GRPC.Server do
           |> Fact.set_source_uri(req.source_uri)
           |> Fact.set_value(req.value)
         end)
-        |> Stream.chunk_every(50)
+        |> Stream.chunk_every(500)
         |> Stream.flat_map(fn bucket ->
           case FactDB.Client.state(bucket) do
             {:ok, uris} ->

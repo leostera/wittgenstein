@@ -28,10 +28,10 @@ ensure_tables() ->
 %%%-------------------------------------------------------------------
 
 store_facts(Facts) ->
-  {ok, void} = run_query(#cql_query_batch{
-    queries=lists:map(fun query__insert_into_facts_by_entity_field/1, Facts)
-  }),
-  ok.
+  lists:foreach(fun (Fact) ->
+                    Query = query__insert_into_facts_by_entity_field(Fact),
+                    {ok, void} = run_query(Query)
+              end, Facts).
 
 fetch_consolidated_entity(EntityUri) ->
   {ok, Results} = run_query(query__select_facts_by_entity_uri(EntityUri)),
@@ -49,7 +49,7 @@ run_query(Query) ->
   cqerl:run_query(Client, Query).
 
 % query__create_keyspace_if_not_exists() ->
-%   "CREATE KEYSPACE wittgenstein WITH replication = {'class': 'SimpleStrategy', 'replication_factor': 1 };".
+%   "CREATE KEYSPACE wittgenstein WITH replication = {'class': 'SimpleStrategy', 'replication_factor': 3 };".
 
 query__select_facts_by_entity_uri(EntityUri) ->
   #cql_query{
@@ -59,6 +59,8 @@ query__select_facts_by_entity_uri(EntityUri) ->
 
 query__insert_into_facts_by_entity_field(Fact) ->
   #cql_query {
+     reusable = true,
+     consistency = local_quorum,
      statement = "INSERT INTO facts_by_entity_field (entity_uri, field_uri, value) VALUES ( ?, ?, ? ) ;
              ",
      values = [ {entity_uri, fdb_fact:entity_uri(Fact)}
