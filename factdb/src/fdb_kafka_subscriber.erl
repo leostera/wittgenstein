@@ -3,11 +3,11 @@
 -include_lib("brod/include/brod.hrl").
 
 -export([start/0]).
--export([init/2, handle_message/3]).
+-export([init/2, handle_message/2]).
 
-init(_Topic, _Args) -> {ok, [], none}.
+init(_Topic, _Args) -> {ok, none}.
 
-handle_message(_Partition, MessageSet, State) ->
+handle_message(MessageSet, State) ->
   #kafka_message_set{ messages = Messages } = MessageSet,
   case (catch do_handle_message(Messages)) of
     {'EXIT', Reason} ->
@@ -40,12 +40,13 @@ do_handle_message(Messages) ->
   end, Batches).
 
 start() ->
-  brod:start_link_topic_subscriber(#{
+  {ok, _SubscriberCoordinator} = brod:start_link_group_subscriber_v2(#{
     client => fdb_kafka:client_id(),
-    topic => fdb_kafka:inbound_topic(),
+    group_id => <<"wittgenstein.factdb.fact_subscriber">>,
+    topics => [fdb_kafka:inbound_topic()],
     cb_module => ?MODULE,
     consumer_config => [ {begin_offset, latest}
                        , {prefetch_count, 10}
-                       ],
-    init_data => []
-   }).
+                       ]
+   }),
+  ok.

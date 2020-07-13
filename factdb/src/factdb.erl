@@ -9,9 +9,9 @@ start() ->
   ok = fdb_store:setup_cluster(),
   ok = fdb_store:ensure_tables(),
   ok = fdb_kafka:setup_client(),
+  ok = fdb_kafka:ensure_topics(),
   ok = fdb_kafka:setup_producers(),
   ok = fdb_kafka:setup_subscribers(),
-  ok = fdb_kafka:ensure_topics(),
   ok.
 
 entity_by_uri(Uri) ->

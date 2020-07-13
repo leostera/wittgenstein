@@ -15,7 +15,6 @@ defmodule FactDB.GRPC.Server do
   alias Dev.Abstractmachines.Wittgenstein.ProjectDescription
   alias Dev.Abstractmachines.Wittgenstein.ProjectedEntity
 
-  @spec project(ProjectDescription.t(), GRPC.Server.Stream.t()) :: StateFactReply.t()
   def project(_proj_desc, stream) do
     Tracer.with_span "factdb.grpc.project" do
       :ok = FactDB.Client.subscribe_to_projection()
@@ -39,7 +38,6 @@ defmodule FactDB.GRPC.Server do
     error -> IO.inspect("projection error: #{inspect(error)}")
   end
 
-  @spec state_facts(StateFactRequest.t(), GRPC.Server.Stream.t()) :: StateFactReply.t()
   def state_facts(facts, stream) do
     Tracer.with_span "factdb.grpc.state_facts" do
       fact_count =
@@ -69,7 +67,6 @@ defmodule FactDB.GRPC.Server do
     end
   end
 
-  @spec state_fact(StateFactRequest.t(), GRPC.Server.Stream.t()) :: StateFactReply.t()
   def state_fact(req, _stream) do
     Tracer.with_span "factdb.grpc.state_fact" do
       SpanUtils.set_attributes(%{request: req |> Map.from_struct()})
