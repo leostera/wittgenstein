@@ -26,13 +26,15 @@ path = "src/filestore_importer.rs"
 
 [dependencies]
 async-stream = "0.2"
-elasticsearch = "7.8.0-alpha.1"
+elasticsearch = { version = "7.8.0-alpha.1", features = [ "rustls-tls" ] }
 futures = { version = "0.3", default-features = false, features = ["alloc"] }
 json = "0.11.15"
 prost = "0.6"
 rdkafka = "0.23.1"
 rio_api = "0.4.2"
 rio_turtle = "0.4.2"
+serde = "~1"
+serde_json = "~1"
 structopt = "0.3"
 tokio = { version = "0.2", features = ["macros"] }
 tonic = "0.2"

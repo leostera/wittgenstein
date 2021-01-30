@@ -4,7 +4,7 @@ metadata:
   name: factdb
   namespace: wittgenstein
 spec:
-  replicas: 1
+  replicas: 2
   strategy:
     type: RollingUpdate
   selector:
@@ -23,7 +23,7 @@ spec:
           args: ["-c", "cqlsh -e \"CREATE KEYSPACE IF NOT EXISTS wittgenstein WITH replication = {'class': 'SimpleStrategy', 'replication_factor': 2 };\" cassandra.foundation.svc.cluster.local"]
       containers:
         - name: factdb
-          image: registry.mainframe-0:32000/wittgenstein/factdb:0.1.1-cdde59c-20200712T1736190200
+          image: registry.mainframe-0:32000/wittgenstein/factdb:0.1.1-dad1fb8-20200715T0859280200
           env:
             - name: FACTDB_GRPC_PORT
               value: "50051"
@@ -33,6 +33,14 @@ spec:
               value: opentelemetry.foundation.svc.cluster.local
             - name: FACTDB_OPENTELEMETRY_PORT
               value: "9411"
+          resources:
+            limits:
+              cpu: "700m"
+              memory: 2Gi
+            requests:
+              cpu: "500m"
+              memory: 1Gi
+
 
 ---
 

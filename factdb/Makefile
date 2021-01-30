@@ -41,6 +41,10 @@ test: PROPCHECK_VERBOSE=1
 test:
 	mix test
 
+.PHONY: check
+check:
+	mix dialyzer
+
 .PHONY: shell
 shell: MIX_ENV=dev
 shell: codegen

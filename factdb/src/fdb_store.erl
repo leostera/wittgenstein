@@ -14,13 +14,14 @@
 %%%-------------------------------------------------------------------
 
 setup_cluster() ->
-  ok = cqerl_cluster:add_nodes([ "10.152.183.45" ],
+  ok = cqerl_cluster:add_nodes([ "10.152.183.48" ],
                                [ {keyspace, wittgenstein} ]),
   ok.
 
 
 ensure_tables() ->
-  {ok, _SchemaChange} = run_query(query__create_table_facts_by_entity_field()),
+  {ok, _} = run_query(query__create_table_facts_by_entity_field()),
+  {ok, _} = run_query(query__create_table_facts()),
   ok.
 
 %%%-------------------------------------------------------------------
@@ -28,10 +29,18 @@ ensure_tables() ->
 %%%-------------------------------------------------------------------
 
 store_facts(Facts) ->
+  T0 = erlang:system_time(),
+  {ok, Client} = cqerl:get_client(),
   lists:foreach(fun (Fact) ->
-                    Query = query__insert_into_facts_by_entity_field(Fact),
-                    {ok, void} = run_query(Query)
-              end, Facts).
+                    Q0 = query__insert_into_facts(Fact),
+                    cqerl:send_query(Client, Q0),
+                    Q1 = query__insert_into_facts_by_entity_field(Fact),
+                    cqerl:send_query(Client, Q1)
+                end, Facts),
+  T1 = erlang:system_time() - T0,
+  io:format("~p | ts=~p stored ~p facts in ~pms\n",
+            [ node(), erlang:system_time(), length(Facts), T1 / 1000000.0]),
+  ok.
 
 fetch_consolidated_entity(EntityUri) ->
   {ok, Results} = run_query(query__select_facts_by_entity_uri(EntityUri)),
@@ -53,8 +62,25 @@ run_query(Query) ->
 
 query__select_facts_by_entity_uri(EntityUri) ->
   #cql_query{
+     reusable = true,
+     consistency = local_quorum,
      statement = "SELECT field_uri, value FROM facts_by_entity_field WHERE entity_uri = ?;",
      values = [{entity_uri, EntityUri}]
+    }.
+
+query__insert_into_facts(Fact) ->
+  #cql_query {
+     reusable = true,
+     consistency = local_quorum,
+     statement = "INSERT INTO facts (fact_uri, ts, source_uri, entity_uri, field_uri, value) VALUES ( ?, ?, ?, ?, ?, ? ) ;
+             ",
+     values = [ {fact_uri, fdb_fact:uri(Fact)}
+              , {ts, fdb_fact:timestamp(Fact)}
+              , {source_uri, fdb_fact:source_uri(Fact)}
+              , {entity_uri, fdb_fact:entity_uri(Fact)}
+              , {field_uri, fdb_fact:field_uri(Fact)}
+              , {value, fdb_fact:value(Fact)}
+              ]
     }.
 
 query__insert_into_facts_by_entity_field(Fact) ->
@@ -68,6 +94,9 @@ query__insert_into_facts_by_entity_field(Fact) ->
               , {value, fdb_fact:value(Fact)}
               ]
     }.
+
+query__create_table_facts() ->
+  "CREATE TABLE IF NOT EXISTS facts ( source_uri text, entity_uri text, field_uri text, ts timestamp, fact_uri text, value text, PRIMARY KEY ( (source_uri, fact_uri), ts, entity_uri, field_uri ) ) WITH COMPACT STORAGE ;".
 
 query__create_table_facts_by_entity_field() ->
   "CREATE TABLE IF NOT EXISTS facts_by_entity_field ( entity_uri text, field_uri text, value text, PRIMARY KEY ( (entity_uri), field_uri ) ) WITH COMPACT STORAGE ;".

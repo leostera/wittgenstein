@@ -4,7 +4,7 @@ metadata:
   name: elasticsearch-projection
   namespace: wittgenstein
 spec:
-  replicas: 3
+  replicas: 10
   strategy:
     type: RollingUpdate
   selector:
@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
         - name: elasticsearch-projection
-          image: registry.mainframe-0:32000/wittgenstein/tools:0.1.0-491510a-20200712T1713240200
+          image: registry.mainframe-0:32000/wittgenstein/tools:0.1.0-c95ca5e-20200713T0109290200
           command: ["/elasticsearch-projection"]
           args:
             - "--elasticsearch-url"
@@ -27,6 +27,6 @@ spec:
             - "--index-name"
             - "dev.wittgenstein.entities"
             - "--kafka-group-id"
-            - "0"
+            - "elasticsearch-projection"
 
 

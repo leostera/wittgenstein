@@ -24,19 +24,17 @@ do_handle_message(Messages) ->
                     Messages),
 
   lists:foreach(fun (Facts) ->
-    T0 = erlang:system_time(),
     ok = fdb_store:store_facts(Facts),
-    T1 = erlang:system_time() - T0,
-    io:format("ts=~p stored ~p batches with ~p facts in ~pms\n",
-              [ erlang:system_time(), length(Messages), length(Facts), T1 / 1000000.0]),
 
-    T2 = erlang:system_time(),
+    T0 = erlang:system_time(),
+    %Uris = maps:keys(lists:foldl(fun (F, Acc) -> Acc#{ F => ok } end, #{}, Facts)),
     UriSet = sets:from_list([ fdb_fact:entity_uri(F) || F <- Facts ]),
     Uris = sets:to_list(UriSet),
-    ok = factdb:project(Uris),
-    T3 = erlang:system_time() - T2,
-    io:format("ts=~p projected ~p entities in ~pms\n",
-              [ erlang:system_time(), length(Uris), T3 / 1000000.0])
+    T1 = erlang:system_time() - T0,
+    io:format("~p | ts=~p extracted ~p uris for projection in ~pms\n",
+              [ node(), erlang:system_time(), length(Uris), T1 / 1000000.0]),
+
+    ok = factdb:project(Uris)
   end, Batches).
 
 start() ->
@@ -46,7 +44,7 @@ start() ->
     topics => [fdb_kafka:inbound_topic()],
     cb_module => ?MODULE,
     consumer_config => [ {begin_offset, latest}
-                       , {prefetch_count, 10}
+                       , {prefetch_count, 100}
                        ]
    }),
   ok.

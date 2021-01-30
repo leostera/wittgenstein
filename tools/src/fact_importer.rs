@@ -66,29 +66,20 @@ async fn state_facts(client: &mut FactDbClient<Channel>, opt: Opt) -> Result<(),
                     source_uri: (&opt.source_uri).to_string(),
                     value: t.object.to_string(),
                 };
-                println!("Parsing triple: {}", t.to_string());
                 Ok(f) as Result<StateFactRequest, TurtleError>
             });
 
-        let mut fact_count: u32 = 1;
         for fact in triples {
             match fact {
-                Ok(f) => {
-                    println!("{} Yielding fact: {:?}", fact_count, f);
-                    yield f;
-                    fact_count = fact_count + 1;
-                },
-                _ => println!("Ignored fact {:?}", fact)
+                Ok(f) => yield f,
+                err => print!("\nError: {:?}", err)
             };
         };
+
+        ()
     };
 
     let response = client.state_facts(Request::new(outbound)).await?;
-    let mut inbound = response.into_inner();
-
-    while let Some(reply) = inbound.message().await? {
-        println!("Fact {:?} was stated.", reply);
-    }
-
+    println!("\nImported {:?} facts.", response);
     Ok(())
 }

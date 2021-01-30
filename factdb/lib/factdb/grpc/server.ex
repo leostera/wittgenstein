@@ -12,71 +12,42 @@ defmodule FactDB.GRPC.Server do
 
   alias Dev.Abstractmachines.Wittgenstein.StateFactRequest
   alias Dev.Abstractmachines.Wittgenstein.StateFactReply
-  alias Dev.Abstractmachines.Wittgenstein.ProjectDescription
-  alias Dev.Abstractmachines.Wittgenstein.ProjectedEntity
-
-  def project(_proj_desc, stream) do
-    Tracer.with_span "factdb.grpc.project" do
-      :ok = FactDB.Client.subscribe_to_projection()
-
-      poll = fn poll_fn, count ->
-        receive do
-          {:entity, entity} ->
-            uri = entity["uri"]
-            reply = ProjectedEntity.new(entity_uri: uri, fields: entity)
-            GRPC.Server.send_reply(stream, reply)
-            poll_fn.(poll_fn, count + 1)
-        after
-          1000 ->
-            poll_fn.(poll_fn, count)
-        end
-      end
-
-      poll.(poll, 0)
-    end
-  rescue
-    error -> IO.inspect("projection error: #{inspect(error)}")
-  end
+  alias Dev.Abstractmachines.Wittgenstein.StreamedStateFactReply
 
   def state_facts(facts, stream) do
     Tracer.with_span "factdb.grpc.state_facts" do
       fact_count =
         facts
-        |> Stream.map(fn req ->
-          Fact.new()
-          |> Fact.set_entity_uri(req.entity_uri)
-          |> Fact.set_field_uri(req.field_uri)
-          |> Fact.set_source_uri(req.source_uri)
-          |> Fact.set_value(req.value)
-        end)
-        |> Stream.chunk_every(500)
-        |> Stream.flat_map(fn bucket ->
-          case FactDB.Client.state(bucket) do
-            {:ok, uris} ->
-              uris
-              |> Enum.map(fn uri -> StateFactReply.new(response: {:fact_uri, uri}) end)
-
-            {:error, reason} ->
-              StateFactReply.new(response: [error: reason |> IO.inspect()])
+        |> Stream.map(&req_to_fact/1)
+        |> Stream.chunk_every(1000)
+        |> Stream.map(&FactDB.Client.state/1)
+        |> Stream.map(
+          fn {:ok, uris} -> Enum.count(uris)
+            error ->
+              Logger.error(error)
+              0
           end
-        end)
-        |> Stream.map(fn reply -> GRPC.Server.send_reply(stream, reply) end)
-        |> Enum.count()
+        )
+        |> Enum.reduce(0, &(&1 + &2))
 
-      IO.inspect("Processed #{fact_count} facts")
+      IO.inspect("#{NaiveDateTime.utc_now()} - Processed #{fact_count} facts")
+      StreamedStateFactReply.new(fact_count: fact_count)
     end
+  end
+
+  defp req_to_fact(req) do
+    Fact.new()
+    |> Fact.set_entity_uri(req.entity_uri)
+    |> Fact.set_field_uri(req.field_uri)
+    |> Fact.set_source_uri(req.source_uri)
+    |> Fact.set_value(req.value)
   end
 
   def state_fact(req, _stream) do
     Tracer.with_span "factdb.grpc.state_fact" do
       SpanUtils.set_attributes(%{request: req |> Map.from_struct()})
 
-      fact =
-        Fact.new()
-        |> Fact.set_entity_uri(req.entity_uri)
-        |> Fact.set_field_uri(req.field_uri)
-        |> Fact.set_source_uri(req.source_uri)
-        |> Fact.set_value(req.value)
+      fact = req_to_fact(req)
 
       case FactDB.Client.state([fact]) do
         {:ok, [_]} ->
