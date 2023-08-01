@@ -1,20 +1,21 @@
 # Roadmap
 
 FactDB:
--[x] store all facts
--[x] require facts to have a nanosecond timestamp
--[ ] use fact timestamp in column value to let cassandra determine who won
--[ ] support more kinds of values:
-     -[ ] simple literals - DONE
-     -[ ] language tagged literals
-     -[ ] type tagged literals
-     -[ ] collections?
--[ ] honor OWL cardinality
--[x] BUG: let multiple projections subscribe via grpc separately
+
+- [x] store all facts
+- [x] require facts to have a nanosecond timestamp
+- [ ] use fact timestamp in column value to let cassandra determine who won
+- [ ] support more kinds of values:
+      - [ ] simple literals - DONE
+      - [ ] language tagged literals
+      - [ ] type tagged literals
+      - [ ] collections?
+- [ ] honor OWL cardinality
+- [x] BUG: let multiple projections subscribe via grpc separately
      - NOTE: we're just exposing the outbound kafka topic now
--[x] scale horizontally
--[ ] instrument
--[ ] fix Supervision tree to keep all connections (kafka, cassandra) alive
+- [x] scale horizontally
+- [ ] instrument
+- [ ] fix Supervision tree to keep all connections (kafka, cassandra) alive
 
 Tools:
 - fact tool:
